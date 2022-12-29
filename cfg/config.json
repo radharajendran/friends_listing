@@ -1,4 +1,5 @@
 {
-    "dbDataPath": "db/dorian.db",
-    "pageSize": 20
+    "dbDataPath": "db/user_connections.db",
+    "pageSize": 20,
+    "connectionLevel": 2
 }

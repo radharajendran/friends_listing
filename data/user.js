@@ -33,7 +33,7 @@ const bfs_search = async(req, res) => {
           SELECT friendid, visited || friendid || '/', connection + 1
           FROM Friends, bfs_tree
           WHERE userid = bfs_id AND instr(visited, '/' || friendid || '/') == 0
-          AND bfs_tree.connection <= 2
+          AND bfs_tree.connection <= ${cfg.connectionLevel}
           ORDER BY 3 asc
       )
       SELECT 

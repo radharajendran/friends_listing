@@ -157,6 +157,15 @@ function Search() {
   const search = document.getElementById('search').value;
   let pageNo = document.getElementById('txtPageNo').value || 1;
 
+  if(!userId) 
+    alert('Please Enter User Id');
+  
+  if(!search)
+    alert('Please Enter Search data');
+
+  if(!pageNo) 
+    alert('Please Enter Page No')
+
   axios.get(`http://localhost:3001/api/search/${userId}/${search}?pageNo=${pageNo}`).then((response) => {
     Render(response.data);
   }).catch((err) => {

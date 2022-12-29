@@ -1,5 +1,8 @@
 const db = require('./database');
 const http = require('../shared/http');
+const logger = require('../shared/logger');
+
+logger.initialize();
 
 /**
  * Method used to connect with friends
@@ -17,6 +20,7 @@ const addFriend = async (req, res) => {
     db.run(query).then((results) => {
         http.send(req, res, { status: 'success', message: 'Friend connection made successfully', users: results });
       }).catch((err) => {
+        logger.logError('Error in while connecting a friend', err);
         http.send(req, res, err);
     });
 }
@@ -37,6 +41,8 @@ const removeFriend = async (req, res) => {
     db.run(sqlQuery).then((results) => {
         http.send(req, res, { status: 'success', message: 'Friend connection removed successfully', users: results });
       }).catch((err) => {
+        logger.logError('Error in while removing a connection with friend', err);
+
         http.send(req, res, err);
     });
 
