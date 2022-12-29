@@ -1,0 +1,182 @@
+<html>
+<head>
+
+<style>
+.search {
+  width: 15em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+#results {
+  width: 15em;
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: lightgray;
+}
+.user {
+  display: grid;
+  grid-template-columns: 1.2fr 5fr 3fr;
+  align-items: center;
+
+  height: 2em;
+  width: 90%;
+  border-radius: 1em;
+  border-width: 2px;
+  border-style: solid;
+  background-color: white;
+  margin-top: 2px;
+  margin-left: 10px;
+}
+.userName {
+  height: 1em;
+  margin-left: 0.5em;
+}
+.connection {
+  height: 1em;
+  margin-left: 0.5em;
+
+  border-radius: 0.5em;
+  border-width: 1px;
+  border-style: solid;
+  background-color: white;
+}
+.hide {
+  height: 1em;
+  margin-left: 0.5em;
+}
+.button {
+  height: 1em;
+  margin-right: 0.5em;
+
+  border-radius: 0.5em;
+  border-width: 1px;
+  border-style: solid;
+  background-color: white;
+
+  text-align: center;
+}
+.button:hover {
+  background-color: lightgray;
+}
+.error {
+  height: 25em;
+  width: 100%;
+  background-color: lightred;
+}
+</style>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script language='JavaScript'>
+
+function ConnectionText(connection) {
+  if (!connection) {
+    return '&nbsp';
+  } else if (connection < 4) {
+    return ['1st', '2nd', '3rd'][connection - 1];
+  } else {
+    return `${connection}th`;
+  }
+}
+
+function RenderUser(container, user) {
+  const div = document.createElement('div');
+  div.classList.add('user');
+  const cls = user.connection ? 'connection' : 'hide';
+  const con = ConnectionText(user.connection);
+
+  div.innerHTML = `<div class='${cls}'>${con}</div><div class='userName'>${user.name}</div>`;
+  const button = document.createElement('div');
+  button.innerHTML = (user.connection === 1) ? 'Remove' : 'Add';
+  button.classList.add('button');
+  button.dataset.userId = user.id;
+
+  button.addEventListener('click', (e) => {
+    const cmd = (user.connection === 1) ? 'unfriend' : 'friend';
+    const userId = document.getElementById('user').value;
+    let friendId = e.target.getAttribute("data-user-id");
+
+    cmd == 'friend' ? addFriend(userId, friendId) : removeFriend(userId, friendId);
+
+  });
+
+  div.appendChild(button);
+  container.appendChild(div);
+}
+
+function RenderError(container, error) {
+  const div = document.createElement('div');
+  div.classList.add('error');
+  div.innerHTML = `ERROR: ${error}`;
+  container.appendChild(div);
+}
+
+function Render(data) {
+  const div = document.getElementById('results');
+  div.innerHTML = '';
+
+  const resultSummary = document.getElementById('resultSummary');
+
+  if (data.success) {
+    let totalRecords = data.users[0].total_records;
+    let pageSize = data.users[0].page_size;
+
+    if(!data.users.length) {
+        resultSummary.innerHTML = 'No Records Found'
+    }
+    resultSummary.innerHTML = ` Total Records: ${totalRecords}, Total Pages: ${Math.floor(totalRecords/pageSize)}`;
+
+    data.users.forEach((user) => RenderUser(div, user));
+  } else {
+    RenderError(div, data.error);
+  }
+}
+
+function addFriend(userId, friendId) {
+    axios.get(`http://localhost:3001/api/friend/${userId}/${friendId}`)
+    .then(function (response) {
+      Search();
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+}
+
+function removeFriend(userId, friendId) {
+    axios.get(`http://localhost:3001/api/unfriend/${userId}/${friendId}`)
+    .then(function (response) {
+      Search();
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+}
+
+function Search() {
+  const userId = document.getElementById('user').value;
+  const search = document.getElementById('search').value;
+  let pageNo = document.getElementById('txtPageNo').value || 1;
+
+  axios.get(`http://localhost:3001/api/search/${userId}/${search}?pageNo=${pageNo}`).then((response) => {
+    Render(response.data);
+  }).catch((err) => {
+    const div = document.getElementById('results');
+    div.innerHTML = '';
+    RenderError(div, err);
+  });
+}
+</script>
+</head>
+
+<body>
+<div class='search'>
+<div>User Id:</div><div><input id='user' value='1337'/></div>
+<div>Search:</div><div><input id='search' /></div>
+<div>Current Page No:</div><div><input id='txtPageNo' type="number" value="1"/></div>
+<span id="resultSummary"></span>
+<button onclick="Search()">Search</button>
+</div>
+<div id='results'>
+</div>
+</body>
+</html>
