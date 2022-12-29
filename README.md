@@ -25,5 +25,9 @@ Below changes are made in existing code base:
 
 - Added util scripts to handle res and err object and logger
 
+- Added UI Validation for Search Parameters
+
+- Added connection level(1, 2, 3) in config to get hierarchy of friends
+
 
 
