@@ -89,7 +89,7 @@ function RenderUser(container, user) {
   const button = document.createElement('div');
   button.innerHTML = (user.connection === 1) ? 'Remove' : 'Add';
   button.classList.add('button');
-  button.dataset.userId = user.id;
+  button.dataset.userId = user.bfs_id;
 
   button.addEventListener('click', (e) => {
     const cmd = (user.connection === 1) ? 'unfriend' : 'friend';
@@ -181,7 +181,7 @@ function Search() {
 <div class='search'>
 <div>User Id:</div><div><input id='user' value='1337'/></div>
 <div>Search:</div><div><input id='search' /></div>
-<div>Current Page No:</div><div><input id='txtPageNo' type="number" value="1"/></div>
+<div>Page No:</div><div><input id='txtPageNo' type="number" value="1"/></div>
 <span id="resultSummary"></span>
 <button onclick="Search()">Search</button>
 </div>

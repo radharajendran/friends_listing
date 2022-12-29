@@ -3,10 +3,11 @@
   "main": "index.js",
   "dependencies": {
     "express": "^4.17.2",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "winston": "^3.8.2"
   },
   "scripts": {
-    "start": "node index.js", 
+    "start": "node index.js",
     "init_db": "node db/dbManager.js init_data"
   }
 }
